@@ -40,10 +40,12 @@ public class AuthServiceImpl implements AuthService {
         user.setFullName(request.getFullName());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setPhone(request.getPhone());
+        user.setLocation(request.getLocation());
         user.setEnabled(true);
 
-        Role userRole = roleRepository.findById(request.getRoleId())
-                .orElseThrow(() -> new RuntimeException("Role with given ID not found"));
+        Role userRole = roleRepository.findByName(request.getRoleName())
+                .orElseThrow(() -> new RuntimeException("Role not found: " + request.getRoleName()));
         user.setRoles(Set.of(userRole));
 
         userRepository.save(user);
@@ -54,6 +56,8 @@ public class AuthServiceImpl implements AuthService {
                 .token(JWT)
                 .email(user.getEmail())
                 .fullName(user.getFullName())
+                .phone(user.getPhone())
+                .location(user.getLocation())
                 .roles(user.getRoles().stream().map(Role::getName).collect(Collectors.toList()))
                 .build();
     }
@@ -73,6 +77,8 @@ public class AuthServiceImpl implements AuthService {
                 .token(JWT)
                 .email(user.getEmail())
                 .fullName(user.getFullName())
+                .phone(user.getPhone())
+                .location(user.getLocation())
                 .roles(user.getRoles().stream().map(Role::getName).collect(Collectors.toList()))
                 .build();
     }

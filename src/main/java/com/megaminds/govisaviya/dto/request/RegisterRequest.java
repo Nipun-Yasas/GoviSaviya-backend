@@ -2,7 +2,6 @@ package com.megaminds.govisaviya.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
@@ -17,6 +16,12 @@ public class RegisterRequest {
     @NotBlank(message = "Password is required")
     private String password;
 
-    @NotNull(message = "Role ID is required")
-    private Long roleId;
+    @NotBlank(message = "Phone number is required")
+    private String phone;
+
+    @NotBlank(message = "Location is required")
+    private String location;
+
+    @NotBlank(message = "Role is required")
+    private String roleName;
 }

@@ -42,6 +42,12 @@ public class User implements UserDetails {
     @Builder.Default
     private Set<Role> roles = new HashSet<>();
 
+    @Column(nullable = true)
+    private String phone;
+
+    @Column(nullable = true)
+    private String location;
+
     @Column(nullable = false)
     @Builder.Default
     private boolean enabled = true;
