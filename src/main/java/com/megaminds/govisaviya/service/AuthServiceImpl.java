@@ -3,6 +3,8 @@ package com.megaminds.govisaviya.service;
 import com.megaminds.govisaviya.dto.request.LoginRequest;
 import com.megaminds.govisaviya.dto.request.RegisterRequest;
 import com.megaminds.govisaviya.dto.response.AuthResponse;
+import com.megaminds.govisaviya.entity.Buyer;
+import com.megaminds.govisaviya.entity.Farmer;
 import com.megaminds.govisaviya.entity.Role;
 import com.megaminds.govisaviya.entity.User;
 import com.megaminds.govisaviya.repository.RoleRepository;
@@ -35,7 +37,24 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("Email already exists");
         }
 
-        User user = new User();
+        User user;
+
+        if ("FARMER".equalsIgnoreCase(request.getRoleName())) {
+            Farmer farmer = new Farmer();
+            farmer.setFarmSize(request.getFarmSize());
+            farmer.setCropTypes(request.getCropTypes());
+            farmer.setExperience(request.getExperience());
+            farmer.setFarmLocationDetails(request.getFarmLocationDetails());
+            user = farmer;
+        } else if ("BUYER".equalsIgnoreCase(request.getRoleName())) {
+            Buyer buyer = new Buyer();
+            buyer.setBusinessName(request.getBusinessName());
+            buyer.setBuyingPurpose(request.getBuyingPurpose());
+            buyer.setPreferredCropTypes(request.getPreferredCropTypes());
+            user = buyer;
+        } else {
+            user = new User();
+        }
 
         user.setFullName(request.getFullName());
         user.setEmail(request.getEmail());

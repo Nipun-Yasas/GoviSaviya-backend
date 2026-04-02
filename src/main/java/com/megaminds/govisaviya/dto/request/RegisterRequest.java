@@ -24,4 +24,15 @@ public class RegisterRequest {
 
     @NotBlank(message = "Role is required")
     private String roleName;
+
+    // Farmer-specific Fields
+    private String farmSize;
+    private String cropTypes;
+    private Integer experience;
+    private String farmLocationDetails;
+
+    // Buyer-specific Fields
+    private String businessName;
+    private String buyingPurpose;
+    private String preferredCropTypes;
 }
