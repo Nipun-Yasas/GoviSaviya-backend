@@ -15,3 +15,7 @@ spring:
 jwt:
   secret: yc9rKoikQCWZM1LWdsdTAstlnfeAo2DlzPiuiVFF2yM
   expiration: 3600000000
+
+plantnet:
+  api:
+    key: 2b10pdJX7beK9ZdyXLXf1Rfe

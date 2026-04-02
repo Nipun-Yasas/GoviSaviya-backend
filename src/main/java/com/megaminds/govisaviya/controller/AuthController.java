@@ -1,7 +1,7 @@
 package com.megaminds.govisaviya.controller;
 
 import com.megaminds.govisaviya.service.AuthService;
-
+import com.megaminds.govisaviya.util.RestURIs;
 import lombok.RequiredArgsConstructor;
 
 import com.megaminds.govisaviya.dto.request.LoginRequest;
@@ -12,23 +12,23 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping(RestURIs.AUTH)
 @RequiredArgsConstructor
 public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping("/register")
+    @PostMapping(RestURIs.REGISTER)
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
         return ResponseEntity.ok(authService.register(request));
     }
 
-    @PostMapping("/login")
+    @PostMapping(RestURIs.LOGIN)
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));
     }
 
-    @PostMapping("/logout")
+    @PostMapping(RestURIs.LOGOUT)
     public ResponseEntity<String> logout() {
         return ResponseEntity.ok("Successfully logged out");
     }
