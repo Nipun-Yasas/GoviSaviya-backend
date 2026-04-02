@@ -11,6 +11,7 @@ public class RestURIs {
     // Disease controller
     public final static String DISEASE = "/api/v1/disease";
     public final static String IDENTIFY = "/identify";
+    public final static String HISTORY = "/history";
 
     // Plantnet controller
     public final static String PLANTNET = "https://my-api.plantnet.org";

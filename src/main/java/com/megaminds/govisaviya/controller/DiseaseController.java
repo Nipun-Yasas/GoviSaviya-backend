@@ -1,7 +1,8 @@
 package com.megaminds.govisaviya.controller;
 
+import com.megaminds.govisaviya.dto.response.DiseaseHistory;
 import com.megaminds.govisaviya.dto.response.IdentifiedDisease;
-import com.megaminds.govisaviya.service.DiseaseIdentifyService;
+import com.megaminds.govisaviya.service.DiseaseService;
 import com.megaminds.govisaviya.util.RestURIs;
 
 import lombok.AllArgsConstructor;
@@ -16,9 +17,9 @@ import java.util.List;
 @RestController
 @RequestMapping(RestURIs.DISEASE)
 @AllArgsConstructor
-public class DiseaseIdentifyController {
+public class DiseaseController {
 
-    private final DiseaseIdentifyService diseaseIdentifyService;
+    private final DiseaseService diseaseService;
 
     /**
      * Identifies plant diseases from uploaded images.
@@ -31,7 +32,16 @@ public class DiseaseIdentifyController {
     public ResponseEntity<IdentifiedDisease> identifyDisease(
             @RequestParam("images") List<MultipartFile> images) {
 
-        IdentifiedDisease response = diseaseIdentifyService.identifyDisease(images);
+        IdentifiedDisease response = diseaseService.identifyDisease(images);
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(response);
     }
+
+
+    @GetMapping(RestURIs.HISTORY)
+    public ResponseEntity<List<DiseaseHistory>> getDiseaseHistory() {
+        List<DiseaseHistory> response = diseaseService.getDiseaseHistory();
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(response);
+    }
+
+    
 }
