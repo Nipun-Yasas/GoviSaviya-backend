@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: govisaviya
+  profiles:
+    active: development
+  config:
+    import: optional:file:.env
+
+server:
+  servlet:
+    context-path: /govisaviya
+  port: 8080
+  forward-headers-strategy: framework
+
