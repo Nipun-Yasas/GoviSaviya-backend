@@ -13,10 +13,21 @@ public class RestURIs {
     public final static String IDENTIFY = "/identify";
     public final static String HISTORY = "/history";
 
+    // Marketplace controller
+    public final static String MARKETPLACE = "/api/v1/marketplace";
+    public final static String PRODUCTS = "/products";
+    public final static String ORDERS = "/orders";
+
     // Plantnet controller
     public final static String PLANTNET = "https://my-api.plantnet.org";
     public final static String DISEASE_IDENTIFY = "/v2/diseases/identify";
 
+    // Delivery controller
+    public final static String DELIVERY = "/api/v1/delivery";
+    public final static String ASSIGN = "/assign";
+    public final static String MY_DELIVERIES = "/my";
+    public final static String UPDATE_STATUS = "/status";
+    public final static String PERSONS = "/persons";
     // Monitor controller
     public final static String MONITOR = "/api/v1/monitor";
     public final static String POLYGON = "/polygon";
@@ -36,3 +47,5 @@ public class RestURIs {
     public final static String FERTILIZER_ADMIN_BY_ID  = "/admin/{id}";
     public final static String FERTILIZER_ADMIN_REVIEW = "/admin/{id}/review";
 }
+
+
