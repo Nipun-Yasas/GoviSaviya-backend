@@ -59,13 +59,29 @@ public class MarketplaceServiceImpl implements MarketplaceService {
         order.setBuyer(buyer);
         order.setStatus(OrderStatus.PENDING);
         
-        // Link order items to order
         if (order.getItems() != null) {
-            order.getItems().forEach(item -> item.setOrder(order));
+            for (OrderItem item : order.getItems()) {
+                Product product = productRepository.findById(item.getProduct().getId())
+                        .orElseThrow(() -> new RuntimeException("Product not found: " + item.getProduct().getId()));
+                
+                if (product.getAvailableQuantity().compareTo(item.getQuantity()) < 0) {
+                    throw new RuntimeException("Insufficient stock for: " + product.getName());
+                }
+                
+                // Reduce inventory
+                product.setAvailableQuantity(product.getAvailableQuantity().subtract(item.getQuantity()));
+                productRepository.save(product);
+                
+                // Linkage and Price Persistence
+                item.setOrder(order);
+                item.setProduct(product);
+                item.setPriceAtOrder(product.getPricePerUnit()); // Ensure fresh price from DB
+            }
         }
         
         return orderRepository.save(order);
     }
+
 
     @Override
     public List<Order> getBuyerOrders(String buyerEmail) {

@@ -35,15 +35,13 @@ public class DeliveryServiceImpl implements DeliveryService {
         Delivery delivery = Delivery.builder()
                 .order(order)
                 .deliveryPerson(deliveryPerson)
-                .status(OrderStatus.ASSIGNED)
+                .status(OrderStatus.ASSIGNED) // The delivery record status is assigned
                 .assignedAt(LocalDateTime.now())
                 .build();
 
-        order.setStatus(OrderStatus.ASSIGNED);
-        orderRepository.save(order);
-
         return deliveryRepository.save(delivery);
     }
+
 
     @Override
     @Transactional
