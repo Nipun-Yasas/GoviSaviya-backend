@@ -11,13 +11,18 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import lombok.experimental.SuperBuilder;
+
 @Entity
 @Table(name = "users")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "user_type")
+@DiscriminatorValue("USER")
 public class User implements UserDetails {
 
     @Id
@@ -41,6 +46,12 @@ public class User implements UserDetails {
     )
     @Builder.Default
     private Set<Role> roles = new HashSet<>();
+
+    @Column(nullable = true)
+    private String phone;
+
+    @Column(nullable = true)
+    private String location;
 
     @Column(nullable = false)
     @Builder.Default
