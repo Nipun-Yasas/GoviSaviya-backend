@@ -146,4 +146,30 @@ public class AgroMonitor {
             throw new ExternalServiceException("AgroMonitoring getWeatherData API call failed", e);
         }
     }
+
+    /**
+     * Fetches weather forecast data for the given coordinates.
+     *
+     * <p>GET {agro.api.url}/weather/forecast?lat={lat}&lon={lon}&appid={apiKey}
+     *
+     * @param lat Latitude of the location
+     * @param lon Longitude of the location
+     * @return Raw JSON array: dt, weather[], main, wind, clouds, etc.
+     */
+    public JsonNode getWeatherForecastData(double lat, double lon) {
+        try {
+            return restClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path(RestURIs.AGRO_WEATHER_FORECAST)
+                            .queryParam("lat", lat)
+                            .queryParam("lon", lon)
+                            .queryParam("appid", apiKey)
+                            .build())
+                    .retrieve()
+                    .body(JsonNode.class);
+        } catch (RestClientException e) {
+            log.error("AgroMonitoring getWeatherForecastData API call failed for lat={}, lon={}: {}", lat, lon, e.getMessage(), e);
+            throw new ExternalServiceException("AgroMonitoring getWeatherForecastData API call failed", e);
+        }
+    }
 }

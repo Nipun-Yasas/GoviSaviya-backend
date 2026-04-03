@@ -2,6 +2,7 @@ package com.megaminds.govisaviya.controller;
 
 import com.megaminds.govisaviya.dto.request.CreatePolygonRequest;
 import com.megaminds.govisaviya.dto.response.PolygonResponse;
+import com.megaminds.govisaviya.entity.PolygonRecord;
 import com.megaminds.govisaviya.service.MonitorService;
 import com.megaminds.govisaviya.util.RestURIs;
 
@@ -64,5 +65,33 @@ public class MonitorController {
             @RequestParam double lat,
             @RequestParam double lon) {
         return ResponseEntity.ok(monitorService.getWeatherData(lat, lon));
+    }
+
+    /**
+     * Retrieves the most recent polygon created by the authenticated user.
+     *
+     * GET /api/v1/monitor/my-polygon
+     *
+     * @return 200 OK with the {@link PolygonRecord} (or null if none exists)
+     */
+    @GetMapping(RestURIs.MY_POLYGON)
+    public ResponseEntity<PolygonRecord> getMyPolygon() {
+        return ResponseEntity.ok(monitorService.getMyPolygon());
+    }
+
+    /**
+     * Returns weather forecast data for a geographic coordinate.
+     *
+     * GET /api/v1/monitor/weather/forecast?lat={lat}&lon={lon}
+     *
+     * @param lat Latitude
+     * @param lon Longitude
+     * @return Raw JSON array: [ { dt, weather[], main, wind, clouds, ... }, ... ]
+     */
+    @GetMapping(RestURIs.WEATHER_FORECAST)
+    public ResponseEntity<JsonNode> getWeatherForecastData(
+            @RequestParam double lat,
+            @RequestParam double lon) {
+        return ResponseEntity.ok(monitorService.getWeatherForecastData(lat, lon));
     }
 }

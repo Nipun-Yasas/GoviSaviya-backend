@@ -2,6 +2,7 @@ package com.megaminds.govisaviya.service;
 
 import com.megaminds.govisaviya.dto.request.CreatePolygonRequest;
 import com.megaminds.govisaviya.dto.response.PolygonResponse;
+import com.megaminds.govisaviya.entity.PolygonRecord;
 
 import tools.jackson.databind.JsonNode;
 
@@ -34,4 +35,19 @@ public interface MonitorService {
      * @return Raw JSON: dt, weather[], main, wind, clouds, etc.
      */
     JsonNode getWeatherData(double lat, double lon);
+
+    /**
+     * Retrieves the most recent polygon created by the authenticated user.
+     * @return The polygon record or null if none exists.
+     */
+    PolygonRecord getMyPolygon();
+
+    /**
+     * Returns weather forecast data for a geographic coordinate.
+     *
+     * @param lat Latitude
+     * @param lon Longitude
+     * @return Raw JSON array: dt, weather[], main, wind, clouds, etc.
+     */
+    JsonNode getWeatherForecastData(double lat, double lon);
 }
