@@ -27,4 +27,12 @@ public class RestURIs {
     public final static String AGRO_POLYGONS = "/polygons";
     public final static String AGRO_SOIL     = "/soil";
     public final static String AGRO_WEATHER  = "/weather";
+
+    // Fertilizer Approval controller
+    public final static String FERTILIZER              = "/api/v1/fertilizer";
+    public final static String FERTILIZER_SUBMIT       = "/submit";
+    public final static String FERTILIZER_MY_REQUESTS  = "/my-requests";
+    public final static String FERTILIZER_ADMIN_ALL    = "/admin/all";
+    public final static String FERTILIZER_ADMIN_BY_ID  = "/admin/{id}";
+    public final static String FERTILIZER_ADMIN_REVIEW = "/admin/{id}/review";
 }
