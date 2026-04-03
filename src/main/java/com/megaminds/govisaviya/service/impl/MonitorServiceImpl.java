@@ -112,4 +112,25 @@ public class MonitorServiceImpl implements MonitorService {
         log.info("Fetching weather data for lat={}, lon={}", lat, lon);
         return agroMonitor.getWeatherData(lat, lon);
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public PolygonRecord getMyPolygon() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = (auth != null && auth.getName() != null) ? auth.getName() : "anonymous";
+
+        log.info("Fetching most recent polygon record for user: {}", userEmail);
+
+        return polygonRecordRepository.findByUserEmailOrderByCreatedAtDesc(userEmail)
+                .stream()
+                .findFirst()
+                .orElse(null);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public JsonNode getWeatherForecastData(double lat, double lon) {
+        log.info("Fetching weather forecast data for lat={}, lon={}", lat, lon);
+        return agroMonitor.getWeatherForecastData(lat, lon);
+    }
 }

@@ -106,6 +106,16 @@ public class FertilizerApprovalServiceImpl implements FertilizerApprovalService 
     public FertilizerApprovalResponse getRequestById(Long id) {
         FertilizerApproval approval = approvalRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Fertilizer approval request not found with id: " + id));
+
+        // Security Check: If user is not an Admin, they must be the owner of the record
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = auth != null && auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!isAdmin && !approval.getFarmerEmail().equals(auth.getName())) {
+            throw new RuntimeException("Access denied: You are not authorized to view this request.");
+        }
+
         return toResponse(approval);
     }
 

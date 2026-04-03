@@ -70,6 +70,17 @@ public class FertilizerApprovalController {
         return ResponseEntity.ok(fertilizerApprovalService.getMyRequests());
     }
 
+    /**
+     * GET /api/v1/fertilizer/{id}
+     * Retrieve details of a specific fertilizer request.
+     * Farmers can only view their own requests; Admins can view any.
+     */
+    @GetMapping(RestURIs.FERTILIZER_BY_ID)
+    @PreAuthorize("hasAnyRole('FARMER', 'ADMIN')")
+    public ResponseEntity<FertilizerApprovalResponse> getRequestDetails(@PathVariable Long id) {
+        return ResponseEntity.ok(fertilizerApprovalService.getRequestById(id));
+    }
+
     // ─────────────────────────────────────────────────────────────────────────
     // ADMIN ENDPOINTS
     // ─────────────────────────────────────────────────────────────────────────
