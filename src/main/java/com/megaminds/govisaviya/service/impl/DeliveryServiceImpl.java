@@ -29,13 +29,17 @@ public class DeliveryServiceImpl implements DeliveryService {
         User deliveryPerson = userRepository.findById(deliveryPersonId)
                 .orElseThrow(() -> new RuntimeException("Delivery person not found"));
 
-        // Check if already assigned
+        // Sync order status
+        order.setStatus(OrderStatus.ASSIGNED);
+        orderRepository.save(order);
+
+        // Remove old if exists
         deliveryRepository.findByOrderId(orderId).ifPresent(deliveryRepository::delete);
 
         Delivery delivery = Delivery.builder()
                 .order(order)
                 .deliveryPerson(deliveryPerson)
-                .status(OrderStatus.ASSIGNED) // The delivery record status is assigned
+                .status(OrderStatus.ASSIGNED)
                 .assignedAt(LocalDateTime.now())
                 .build();
 
@@ -43,32 +47,41 @@ public class DeliveryServiceImpl implements DeliveryService {
     }
 
 
+
     @Override
     @Transactional
     public Delivery updateDeliveryStatus(Long deliveryId, String status, String deliveryPersonEmail) {
         Delivery delivery = deliveryRepository.findById(deliveryId)
-                .orElseThrow(() -> new RuntimeException("Delivery not found"));
+                .orElseThrow(() -> new RuntimeException("Delivery record not found"));
 
-        if (!delivery.getDeliveryPerson().getEmail().equals(deliveryPersonEmail)) {
-            throw new RuntimeException("Unauthorized");
+        if (delivery.getDeliveryPerson() == null || !delivery.getDeliveryPerson().getEmail().equalsIgnoreCase(deliveryPersonEmail)) {
+            throw new RuntimeException("Unauthorized: This delivery is assigned to another driver.");
         }
 
-        OrderStatus orderStatus = OrderStatus.valueOf(status.toUpperCase());
-        delivery.setStatus(orderStatus);
-        
-        if (orderStatus == OrderStatus.PICKED_UP) {
-            delivery.setPickedUpAt(LocalDateTime.now());
-        } else if (orderStatus == OrderStatus.DELIVERED) {
-            delivery.setDeliveredAt(LocalDateTime.now());
+        try {
+            OrderStatus orderStatus = OrderStatus.valueOf(status.toUpperCase());
+            delivery.setStatus(orderStatus);
+            
+            if (orderStatus == OrderStatus.PICKED_UP) {
+                delivery.setPickedUpAt(LocalDateTime.now());
+            } else if (orderStatus == OrderStatus.DELIVERED) {
+                delivery.setDeliveredAt(LocalDateTime.now());
+            }
+
+            // Sync with main order
+            Order order = delivery.getOrder();
+            if (order != null) {
+                order.setStatus(orderStatus);
+                orderRepository.save(order);
+            }
+
+            return deliveryRepository.save(delivery);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid status provided: " + status);
         }
-
-        // Update main order status as well
-        Order order = delivery.getOrder();
-        order.setStatus(orderStatus);
-        orderRepository.save(order);
-
-        return deliveryRepository.save(delivery);
     }
+
+
 
     @Override
     public List<Delivery> getMyDeliveries(String deliveryPersonEmail) {
