@@ -16,4 +16,15 @@ public class RestURIs {
     // Plantnet controller
     public final static String PLANTNET = "https://my-api.plantnet.org";
     public final static String DISEASE_IDENTIFY = "/v2/diseases/identify";
+
+    // Monitor controller
+    public final static String MONITOR = "/api/v1/monitor";
+    public final static String POLYGON = "/polygon";
+    public final static String SOIL    = "/soil";
+    public final static String WEATHER = "/weather";
+
+    // AgroMonitoring API paths
+    public final static String AGRO_POLYGONS = "/polygons";
+    public final static String AGRO_SOIL     = "/soil";
+    public final static String AGRO_WEATHER  = "/weather";
 }
