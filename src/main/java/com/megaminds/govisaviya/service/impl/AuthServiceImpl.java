@@ -1,4 +1,4 @@
-package com.megaminds.govisaviya.service;
+package com.megaminds.govisaviya.service.impl;
 
 import com.megaminds.govisaviya.dto.request.LoginRequest;
 import com.megaminds.govisaviya.dto.request.RegisterRequest;
@@ -10,6 +10,8 @@ import com.megaminds.govisaviya.entity.User;
 import com.megaminds.govisaviya.repository.RoleRepository;
 import com.megaminds.govisaviya.repository.UserRepository;
 import com.megaminds.govisaviya.security.JwtService;
+import com.megaminds.govisaviya.service.AuthService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
