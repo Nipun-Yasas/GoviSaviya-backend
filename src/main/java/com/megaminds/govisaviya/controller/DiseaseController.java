@@ -19,6 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping(RestURIs.DISEASE)
 @AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 public class DiseaseController {
 
     private final DiseaseService diseaseService;

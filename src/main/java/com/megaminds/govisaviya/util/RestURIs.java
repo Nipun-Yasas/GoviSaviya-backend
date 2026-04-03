@@ -13,6 +13,11 @@ public class RestURIs {
     public final static String IDENTIFY = "/identify";
     public final static String HISTORY = "/history";
 
+    // Marketplace controller
+    public final static String MARKETPLACE = "/api/v1/marketplace";
+    public final static String PRODUCTS = "/products";
+    public final static String ORDERS = "/orders";
+
     // Plantnet controller
     public final static String PLANTNET = "https://my-api.plantnet.org";
     public final static String DISEASE_IDENTIFY = "/v2/diseases/identify";
