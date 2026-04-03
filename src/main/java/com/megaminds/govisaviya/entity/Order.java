@@ -20,9 +20,10 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "buyer_id", nullable = false)
     private User buyer;
+
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal totalAmount;

@@ -14,6 +14,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     List<Order> findByBuyer(User buyer);
 
-    @Query("SELECT DISTINCT o FROM Order o JOIN o.items i WHERE i.product.farmer = :farmer")
-    List<Order> findByFarmer(@Param("farmer") User farmer);
+    @Query("SELECT DISTINCT o FROM Order o JOIN o.items i WHERE i.product.farmer.email = :email")
+    List<Order> findByFarmerEmail(@Param("email") String email);
+
 }

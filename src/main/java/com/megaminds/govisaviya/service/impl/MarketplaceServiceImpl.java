@@ -58,6 +58,8 @@ public class MarketplaceServiceImpl implements MarketplaceService {
         
         order.setBuyer(buyer);
         order.setStatus(OrderStatus.PENDING);
+        order.setOrderedAt(java.time.LocalDateTime.now());
+
         
         if (order.getItems() != null) {
             for (OrderItem item : order.getItems()) {
@@ -92,10 +94,9 @@ public class MarketplaceServiceImpl implements MarketplaceService {
 
     @Override
     public List<Order> getFarmerOrders(String farmerEmail) {
-        User farmer = userRepository.findByEmail(farmerEmail)
-                .orElseThrow(() -> new RuntimeException("Farmer not found"));
-        return orderRepository.findByFarmer(farmer);
+        return orderRepository.findByFarmerEmail(farmerEmail);
     }
+
 
     @Override
     @Transactional
