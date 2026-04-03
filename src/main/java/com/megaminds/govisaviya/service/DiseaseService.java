@@ -3,6 +3,7 @@ package com.megaminds.govisaviya.service;
 import com.megaminds.govisaviya.dto.response.DiseaseHistory;
 import com.megaminds.govisaviya.dto.response.IdentifiedDisease;
 import org.springframework.web.multipart.MultipartFile;
+import tools.jackson.databind.JsonNode;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ public interface DiseaseService {
      * @param images List of image files (max 5)
      * @return Parsed disease identification response including treatment solution
      */
-    IdentifiedDisease identifyDisease(List<MultipartFile> images);
+    IdentifiedDisease<JsonNode> identifyDisease(List<MultipartFile> images);
 
     /**
      * Calls the Gemini 2.5 Flash API to get a treatment/solution for the given disease.

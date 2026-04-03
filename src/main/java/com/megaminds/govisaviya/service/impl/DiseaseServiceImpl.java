@@ -40,7 +40,7 @@ public class DiseaseServiceImpl implements DiseaseService {
      * @return Identified disease result with S3 image URLs and treatment solution
      */
     @Override
-    public IdentifiedDisease identifyDisease(List<MultipartFile> images) {
+    public IdentifiedDisease<JsonNode> identifyDisease(List<MultipartFile> images) {
 
         // 1. Call Pl@ntNet API
         JsonNode apiResponse = plantNetClient.identifyDisease(images);
@@ -103,4 +103,3 @@ public class DiseaseServiceImpl implements DiseaseService {
                 .collect(Collectors.toList());
     }
 }
-

@@ -5,6 +5,8 @@ import com.megaminds.govisaviya.dto.response.IdentifiedDisease;
 import com.megaminds.govisaviya.service.DiseaseService;
 import com.megaminds.govisaviya.util.RestURIs;
 
+import tools.jackson.databind.JsonNode;
+
 import lombok.AllArgsConstructor;
 
 import org.springframework.http.MediaType;
@@ -29,10 +31,10 @@ public class DiseaseController {
      * @return Disease identification result from Pl@ntNet
      */
     @PostMapping(value = RestURIs.IDENTIFY, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<IdentifiedDisease> identifyDisease(
+    public ResponseEntity<IdentifiedDisease<JsonNode>> identifyDisease(
             @RequestParam("images") List<MultipartFile> images) {
 
-        IdentifiedDisease response = diseaseService.identifyDisease(images);
+        IdentifiedDisease<JsonNode> response = diseaseService.identifyDisease(images);
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(response);
     }
 
