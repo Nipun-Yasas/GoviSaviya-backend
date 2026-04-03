@@ -36,12 +36,10 @@ public class DiseaseController {
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(response);
     }
 
-
     @GetMapping(RestURIs.HISTORY)
     public ResponseEntity<List<DiseaseHistory>> getDiseaseHistory() {
         List<DiseaseHistory> response = diseaseService.getDiseaseHistory();
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(response);
     }
 
-    
 }

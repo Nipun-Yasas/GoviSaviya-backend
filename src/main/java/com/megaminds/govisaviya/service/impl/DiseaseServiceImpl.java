@@ -1,5 +1,6 @@
 package com.megaminds.govisaviya.service.impl;
 
+import com.megaminds.govisaviya.apiclient.Gemini;
 import com.megaminds.govisaviya.apiclient.PlantNet;
 import com.megaminds.govisaviya.dto.response.DiseaseHistory;
 import com.megaminds.govisaviya.dto.response.IdentifiedDisease;
@@ -26,15 +27,17 @@ import java.util.stream.Collectors;
 public class DiseaseServiceImpl implements DiseaseService {
 
     private final PlantNet plantNetClient;
+    private final Gemini geminiClient;
     private final S3Service s3Service;
     private final DiseaseRecordRepository diseaseRecordRepository;
 
     /**
      * Calls Pl@ntNet to identify diseases, uploads all images to S3,
-     * persists the record to PostgreSQL, and returns the enriched response.
+     * fetches a Gemini-generated solution, persists the record,
+     * and returns the enriched response.
      *
      * @param images List of plant images to analyze (max 5)
-     * @return Identified disease result with all S3 image URLs attached
+     * @return Identified disease result with S3 image URLs and treatment solution
      */
     @Override
     public IdentifiedDisease identifyDisease(List<MultipartFile> images) {
@@ -51,25 +54,43 @@ public class DiseaseServiceImpl implements DiseaseService {
                 ? descriptionNode.asString()
                 : "Unknown";
 
-        // 4. Get authenticated user email from SecurityContext
+        // 4. Get treatment solution from Gemini 2.5 Flash
+        String solution = getDiseaseSolution(diseaseName);
+
+        // 5. Get authenticated user email from SecurityContext
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = (auth != null) ? auth.getName() : "anonymous";
 
-        // 5. Persist to PostgreSQL
+        // 6. Persist to PostgreSQL (includes solution)
         DiseaseRecord record = DiseaseRecord.builder()
                 .userEmail(userEmail)
                 .imageUrls(imageUrls)
                 .diseaseName(diseaseName)
+                .solution(solution)
                 .build();
         diseaseRecordRepository.save(record);
 
-        log.info("Disease record saved — user: {}, disease: {}, images: {}", userEmail, diseaseName, imageUrls.size());
+        log.info("Disease record saved — user: {}, disease: {}, images: {}",
+                userEmail, diseaseName, imageUrls.size());
 
-        // 6. Build and return response
+        // 7. Build and return enriched response
         IdentifiedDisease<JsonNode> response = new IdentifiedDisease<>();
         response.setImageUrls(imageUrls);
         response.setResult(apiResponse);
+        response.setSolution(solution);
         return response;
+    }
+
+    /**
+     * Delegates to GeminiClient to get a concise treatment plan for the given disease.
+     *
+     * @param diseaseName Top disease name from Pl@ntNet
+     * @return Actionable treatment advice string from Gemini 2.5 Flash
+     */
+    @Override
+    public String getDiseaseSolution(String diseaseName) {
+        log.info("Requesting Gemini solution for disease: {}", diseaseName);
+        return geminiClient.getDiseaseSolution(diseaseName);
     }
 
     @Override
@@ -77,6 +98,9 @@ public class DiseaseServiceImpl implements DiseaseService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = (auth != null) ? auth.getName() : "anonymous";
         List<DiseaseRecord> records = diseaseRecordRepository.findByUserEmailOrderByIdentifiedAtDesc(userEmail);
-        return records.stream().map(record -> new DiseaseHistory(record.getDiseaseName(), record.getImageUrls())).collect(Collectors.toList());
+        return records.stream()
+                .map(record -> new DiseaseHistory(record.getDiseaseName(), record.getImageUrls()))
+                .collect(Collectors.toList());
     }
 }
+

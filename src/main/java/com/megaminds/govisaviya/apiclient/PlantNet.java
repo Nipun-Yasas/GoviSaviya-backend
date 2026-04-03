@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
+@Slf4j
 @Component
 public class PlantNet {
 
@@ -80,6 +81,7 @@ public class PlantNet {
                     .retrieve()
                     .body(JsonNode.class);
         } catch (RestClientException e) {
+            log.error("Pl@ntNet API call failed: {}", e.getMessage(),e);
             throw new ExternalServiceException("Pl@ntNet API call failed", e);
         }
     }

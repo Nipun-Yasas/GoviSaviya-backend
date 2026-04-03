@@ -20,6 +20,10 @@ plantnet:
   api:
     key: 2b10pdJX7beK9ZdyXLXf1Rfe
 
+gemini:
+  api:
+    key: ${GEMINI_API_KEY}
+
 aws:
   s3:
     bucket-name: ${AWS_S3_BUCKET_NAME}
