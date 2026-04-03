@@ -3,7 +3,9 @@ package com.megaminds.govisaviya.entity;
 public enum OrderStatus {
     PENDING,
     ACCEPTED,
-    READY,
+    ASSIGNED,
+    PICKED_UP,
     DELIVERED,
     REJECTED
 }
+

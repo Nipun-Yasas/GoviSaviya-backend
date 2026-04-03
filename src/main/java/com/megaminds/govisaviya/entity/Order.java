@@ -38,6 +38,10 @@ public class Order {
     @Column(nullable = false, updatable = false)
     private LocalDateTime orderedAt;
 
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean deliveryRequired = false;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<OrderItem> items = new ArrayList<>();
