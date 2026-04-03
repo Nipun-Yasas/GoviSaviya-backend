@@ -28,6 +28,24 @@ public class RestURIs {
     public final static String MY_DELIVERIES = "/my";
     public final static String UPDATE_STATUS = "/status";
     public final static String PERSONS = "/persons";
+    // Monitor controller
+    public final static String MONITOR = "/api/v1/monitor";
+    public final static String POLYGON = "/polygon";
+    public final static String SOIL    = "/soil";
+    public final static String WEATHER = "/weather";
+
+    // AgroMonitoring API paths
+    public final static String AGRO_POLYGONS = "/polygons";
+    public final static String AGRO_SOIL     = "/soil";
+    public final static String AGRO_WEATHER  = "/weather";
+
+    // Fertilizer Approval controller
+    public final static String FERTILIZER              = "/api/v1/fertilizer";
+    public final static String FERTILIZER_SUBMIT       = "/submit";
+    public final static String FERTILIZER_MY_REQUESTS  = "/my-requests";
+    public final static String FERTILIZER_ADMIN_ALL    = "/admin/all";
+    public final static String FERTILIZER_ADMIN_BY_ID  = "/admin/{id}";
+    public final static String FERTILIZER_ADMIN_REVIEW = "/admin/{id}/review";
 }
 
 

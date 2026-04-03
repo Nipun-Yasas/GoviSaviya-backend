@@ -26,7 +26,12 @@ gemini:
 
 aws:
   s3:
-    bucket-name: ${AWS_S3_BUCKET_NAME:your-bucket-name}
-    region: ${AWS_REGION:us-east-1}
-    access-key: ${AWS_ACCESS_KEY_ID:your-access-key}
-    secret-key: ${AWS_SECRET_ACCESS_KEY:your-secret-key}
+    bucket-name: ${AWS_S3_BUCKET_NAME}
+    region: ${AWS_REGION}
+    access-key: ${AWS_ACCESS_KEY_ID}
+    secret-key: ${AWS_SECRET_ACCESS_KEY}
+
+agro:
+  api:
+    url: http://api.agromonitoring.com/agro/1.0/
+    key: ${AGRO_MONITOR}
