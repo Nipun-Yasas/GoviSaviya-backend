@@ -22,7 +22,7 @@ plantnet:
 
 gemini:
   api:
-    key: ${GEMINI_API_KEY}
+    key: ${GEMINI_API_KEY:YOUR_GEMINI_API_KEY}
 
 aws:
   s3:

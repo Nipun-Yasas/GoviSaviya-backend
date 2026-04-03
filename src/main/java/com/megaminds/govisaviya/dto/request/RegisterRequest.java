@@ -35,4 +35,9 @@ public class RegisterRequest {
     private String businessName;
     private String buyingPurpose;
     private String preferredCropTypes;
+
+    // Delivery-specific Fields
+    private String vehicleNumber;
+    private String vehicleType;
 }
+

@@ -4,6 +4,7 @@ import com.megaminds.govisaviya.dto.request.LoginRequest;
 import com.megaminds.govisaviya.dto.request.RegisterRequest;
 import com.megaminds.govisaviya.dto.response.AuthResponse;
 import com.megaminds.govisaviya.entity.Buyer;
+import com.megaminds.govisaviya.entity.DeliveryPerson;
 import com.megaminds.govisaviya.entity.Farmer;
 import com.megaminds.govisaviya.entity.Role;
 import com.megaminds.govisaviya.entity.User;
@@ -54,6 +55,11 @@ public class AuthServiceImpl implements AuthService {
             buyer.setBuyingPurpose(request.getBuyingPurpose());
             buyer.setPreferredCropTypes(request.getPreferredCropTypes());
             user = buyer;
+        } else if ("DELIVERY".equalsIgnoreCase(request.getRoleName())) {
+            DeliveryPerson deliveryPerson = new DeliveryPerson();
+            deliveryPerson.setVehicleNumber(request.getVehicleNumber());
+            deliveryPerson.setVehicleType(request.getVehicleType());
+            user = deliveryPerson;
         } else {
             user = new User();
         }
