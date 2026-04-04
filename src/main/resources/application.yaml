@@ -2,7 +2,7 @@ spring:
   application:
     name: govisaviya
   profiles:
-    active: development
+    active: production
 
 
 server:
