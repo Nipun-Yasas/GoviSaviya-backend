@@ -66,10 +66,17 @@ public class MarketplaceController {
     }
 
     @PatchMapping(RestURIs.ORDERS + "/{id}/status")
-    public ResponseEntity<Order> updateOrderStatus(
+    public ResponseEntity<?> updateOrderStatus(
             @PathVariable Long id,
             @RequestParam OrderStatus status,
             Authentication auth) {
-        return ResponseEntity.ok(marketplaceService.updateOrderStatus(id, status, auth.getName()));
+        if (auth == null || !auth.isAuthenticated()) {
+            return ResponseEntity.status(401).body("Error: Authentication required for order resolution.");
+        }
+        try {
+            return ResponseEntity.ok(marketplaceService.updateOrderStatus(id, status, auth.getName()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Operational Error: " + e.getMessage());
+        }
     }
 }

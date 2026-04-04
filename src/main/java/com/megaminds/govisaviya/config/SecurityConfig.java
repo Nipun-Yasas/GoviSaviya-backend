@@ -30,12 +30,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/api/health/**").permitAll() // Allow health check endpoints
-                        .requestMatchers("/api/appointments").permitAll() // Allow public appointment creation
-                        .requestMatchers("/api/appointments/test/**").permitAll() // Allow test endpoints
+                        .requestMatchers("/api/v1/marketplace/products").permitAll() // Public listings
+                        .requestMatchers("/api/v1/delivery/persons").permitAll() // Public for assignment
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
-                        .requestMatchers("/api/users/employees").permitAll() // Allow employee endpoints
-                        .anyRequest().permitAll())
+                        .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)

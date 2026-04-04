@@ -20,28 +20,41 @@ public class DeliveryServiceImpl implements DeliveryService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
 
+
     @Override
     @Transactional
     public Delivery assignDelivery(Long orderId, Long deliveryPersonId) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+                .orElseThrow(() -> new RuntimeException("Order #" + orderId + " not found in system."));
         
+        if (!order.isDeliveryRequired()) {
+            throw new RuntimeException("Operational Error: Order #" + orderId + " was marked for farm pickup, not delivery.");
+        }
+
         User deliveryPerson = userRepository.findById(deliveryPersonId)
-                .orElseThrow(() -> new RuntimeException("Delivery person not found"));
+                .orElseThrow(() -> new RuntimeException("Delivery Person #" + deliveryPersonId + " not found."));
+
+        // Validate role (optional check for added safety)
+        boolean isDriver = deliveryPerson.getRoles().stream()
+                .anyMatch(r -> r.getName().equalsIgnoreCase("DELIVERY"));
+        
+        if (!isDriver) {
+            throw new RuntimeException("Actor Error: Selected user #" + deliveryPersonId + " is not registered as a Delivery Person.");
+        }
 
         // Sync order status
         order.setStatus(OrderStatus.ASSIGNED);
         orderRepository.save(order);
 
-        // Remove old if exists
-        deliveryRepository.findByOrderId(orderId).ifPresent(deliveryRepository::delete);
+        // Update existing delivery record or create new one to avoid unique constraint issues
+        Delivery delivery = deliveryRepository.findByOrder_Id(orderId)
+                .orElse(Delivery.builder().order(order).build());
 
-        Delivery delivery = Delivery.builder()
-                .order(order)
-                .deliveryPerson(deliveryPerson)
-                .status(OrderStatus.ASSIGNED)
-                .assignedAt(LocalDateTime.now())
-                .build();
+        delivery.setDeliveryPerson(deliveryPerson);
+        delivery.setStatus(OrderStatus.ASSIGNED);
+        delivery.setAssignedAt(LocalDateTime.now());
+        delivery.setPickedUpAt(null); // Reset if re-assigned
+        delivery.setDeliveredAt(null); // Reset if re-assigned
 
         return deliveryRepository.save(delivery);
     }
@@ -51,27 +64,31 @@ public class DeliveryServiceImpl implements DeliveryService {
     @Override
     @Transactional
     public Delivery updateDeliveryStatus(Long deliveryId, String status, String deliveryPersonEmail) {
+        if (deliveryPersonEmail == null) {
+            throw new RuntimeException("Unauthorized: Authentication required.");
+        }
+
         Delivery delivery = deliveryRepository.findById(deliveryId)
-                .orElseThrow(() -> new RuntimeException("Delivery record not found"));
+                .orElseThrow(() -> new RuntimeException("Delivery record not found with id: " + deliveryId));
 
         if (delivery.getDeliveryPerson() == null || !delivery.getDeliveryPerson().getEmail().equalsIgnoreCase(deliveryPersonEmail)) {
-            throw new RuntimeException("Unauthorized: This delivery is assigned to another driver.");
+            throw new RuntimeException("Unauthorized: This delivery is assigned to another driver or is not assigned.");
         }
 
         try {
-            OrderStatus orderStatus = OrderStatus.valueOf(status.toUpperCase());
-            delivery.setStatus(orderStatus);
+            OrderStatus newStatus = OrderStatus.valueOf(status.toUpperCase().trim());
+            delivery.setStatus(newStatus);
             
-            if (orderStatus == OrderStatus.PICKED_UP) {
+            if (newStatus == OrderStatus.PICKED_UP) {
                 delivery.setPickedUpAt(LocalDateTime.now());
-            } else if (orderStatus == OrderStatus.DELIVERED) {
+            } else if (newStatus == OrderStatus.DELIVERED) {
                 delivery.setDeliveredAt(LocalDateTime.now());
             }
 
             // Sync with main order
             Order order = delivery.getOrder();
             if (order != null) {
-                order.setStatus(orderStatus);
+                order.setStatus(newStatus);
                 orderRepository.save(order);
             }
 

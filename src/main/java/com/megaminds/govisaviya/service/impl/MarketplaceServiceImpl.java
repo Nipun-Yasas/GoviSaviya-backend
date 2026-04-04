@@ -1,6 +1,7 @@
 package com.megaminds.govisaviya.service.impl;
 
 import com.megaminds.govisaviya.entity.*;
+import com.megaminds.govisaviya.repository.DeliveryRepository;
 import com.megaminds.govisaviya.repository.OrderRepository;
 import com.megaminds.govisaviya.repository.ProductRepository;
 import com.megaminds.govisaviya.repository.UserRepository;
@@ -19,6 +20,7 @@ public class MarketplaceServiceImpl implements MarketplaceService {
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
+    private final DeliveryRepository deliveryRepository;
 
     @Override
     public Product createProduct(Product product, String farmerEmail) {
@@ -102,9 +104,16 @@ public class MarketplaceServiceImpl implements MarketplaceService {
     @Transactional
     public Order updateOrderStatus(Long orderId, OrderStatus status, String authenticatedUserEmail) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+                .orElseThrow(() -> new RuntimeException("Order not found with id: " + orderId));
         
         order.setStatus(status);
+        
+        // Sync any associated delivery records
+        deliveryRepository.findByOrder_Id(orderId).ifPresent(delivery -> {
+            delivery.setStatus(status);
+            deliveryRepository.save(delivery);
+        });
+
         return orderRepository.save(order);
     }
 

@@ -43,7 +43,7 @@ public class Order {
     @Builder.Default
     private boolean deliveryRequired = false;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "order", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<OrderItem> items = new ArrayList<>();
 

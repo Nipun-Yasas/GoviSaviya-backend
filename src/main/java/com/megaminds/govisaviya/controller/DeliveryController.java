@@ -20,18 +20,29 @@ public class DeliveryController {
     private final DeliveryService deliveryService;
 
     @PostMapping(RestURIs.ASSIGN)
-    public ResponseEntity<Delivery> assignDelivery(
+    public ResponseEntity<?> assignDelivery(
             @RequestParam Long orderId,
             @RequestParam Long deliveryPersonId) {
-        return ResponseEntity.ok(deliveryService.assignDelivery(orderId, deliveryPersonId));
+        try {
+            return ResponseEntity.ok(deliveryService.assignDelivery(orderId, deliveryPersonId));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Assignment Failed: " + e.getMessage());
+        }
     }
 
     @PatchMapping(RestURIs.UPDATE_STATUS + "/{id}")
-    public ResponseEntity<Delivery> updateStatus(
+    public ResponseEntity<?> updateStatus(
             @PathVariable Long id,
             @RequestParam String status,
             Authentication auth) {
-        return ResponseEntity.ok(deliveryService.updateDeliveryStatus(id, status, auth.getName()));
+        if (auth == null || !auth.isAuthenticated()) {
+            return ResponseEntity.status(401).body("Error: This action requires an active driver session.");
+        }
+        try {
+            return ResponseEntity.ok(deliveryService.updateDeliveryStatus(id, status, auth.getName()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Fulfillment Error: " + e.getMessage());
+        }
     }
 
     @GetMapping(RestURIs.MY_DELIVERIES)
