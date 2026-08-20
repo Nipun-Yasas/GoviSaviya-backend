@@ -8,7 +8,7 @@ spring:
 server:
   servlet:
     context-path: /govisaviya
-  port: 8080
+  port: ${PORT:8080}
   forward-headers-strategy: framework
 
 logging:
