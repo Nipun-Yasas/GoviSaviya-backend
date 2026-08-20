@@ -42,17 +42,33 @@ public class DiseaseServiceImpl implements DiseaseService {
     @Override
     public IdentifiedDisease<JsonNode> identifyDisease(List<MultipartFile> images) {
 
-        // 1. Call Pl@ntNet API
-        JsonNode apiResponse = plantNetClient.identifyDisease(images);
+        // 1. Call Pl@ntNet API with Gemini Vision fallback
+        JsonNode apiResponse;
+        try {
+            apiResponse = plantNetClient.identifyDisease(images);
+        } catch (Exception e) {
+            log.warn("Pl@ntNet API unavailable or rejected ({}), falling back to Gemini AI Vision...", e.getMessage());
+            apiResponse = geminiClient.diagnoseDiseaseMultimodal(images);
+        }
 
         // 2. Upload all images to S3
         List<String> imageUrls = s3Service.uploadImages(images, "disease-images");
 
-        // 3. Extract disease name → result.results[0].description
-        JsonNode descriptionNode = apiResponse.path("results").path(0).path("description");
-        String diseaseName = (!descriptionNode.isMissingNode() && !descriptionNode.isNull())
-                ? descriptionNode.asString()
-                : "Unknown";
+        // 3. Extract plant / disease name → result.results[0].description or species or bestMatch
+        JsonNode firstResult = apiResponse.path("results").path(0);
+        String diseaseName = "Unknown";
+        if (apiResponse.hasNonNull("bestMatch") && !apiResponse.path("bestMatch").asString("").isBlank()) {
+            diseaseName = apiResponse.path("bestMatch").asString("");
+        } else if (!firstResult.isMissingNode() && !firstResult.isNull()) {
+            if (firstResult.hasNonNull("description") && !firstResult.path("description").asString("").isBlank()) {
+                diseaseName = firstResult.path("description").asString("");
+            } else if (firstResult.path("species").hasNonNull("scientificNameWithoutAuthor")) {
+                diseaseName = firstResult.path("species").path("scientificNameWithoutAuthor").asString("");
+                if (firstResult.path("species").path("commonNames").isArray() && !firstResult.path("species").path("commonNames").isEmpty()) {
+                    diseaseName += " (" + firstResult.path("species").path("commonNames").path(0).asString("") + ")";
+                }
+            }
+        }
 
         // 4. Get treatment solution from Gemini 2.5 Flash
         String solution = getDiseaseSolution(diseaseName);

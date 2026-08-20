@@ -20,7 +20,7 @@ public class RestURIs {
 
     // Plantnet controller
     public final static String PLANTNET = "https://my-api.plantnet.org";
-    public final static String DISEASE_IDENTIFY = "/v2/diseases/identify";
+    public final static String DISEASE_IDENTIFY = "/v2/identify/all";
 
     // Delivery controller
     public final static String DELIVERY = "/api/v1/delivery";

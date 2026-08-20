@@ -74,7 +74,7 @@ public class PlantNet {
                             .queryParam("no-reject", NO_REJECT)
                             .queryParam("nb-results", NB_RESULTS)
                             .queryParam("lang", LANG)
-                            .queryParam("api-key", apiKey)
+                            .queryParam("api-key", apiKey != null ? apiKey.trim() : "")
                             .build())
                     .contentType(MediaType.MULTIPART_FORM_DATA)
                     .body(multipartData)
